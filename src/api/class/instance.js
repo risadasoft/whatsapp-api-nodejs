@@ -412,6 +412,27 @@ class WhatsAppInstance {
 
     async sendButtonMessage(to, data) {
         await this.verifyId(this.getWhatsAppId(to))
+        const buttons = data.buttons.map((b, i)=>{
+            return {
+                buttonId: b.id ?? i,
+                buttonText: {displayText: b.text ?? ''},
+                type: 1
+            }
+        })
+        const result = await this.instance.sock?.sendMessage(
+            this.getWhatsAppId(to),
+            {
+                headerType: 1,
+                buttons: buttons,
+                text: data.text ?? '',
+                footer: data.footerText ?? '',
+            }
+        )
+        return result
+    }
+
+    async sendTemplateMessage(to, data) {
+        await this.verifyId(this.getWhatsAppId(to))
         const result = await this.instance.sock?.sendMessage(
             this.getWhatsAppId(to),
             {
